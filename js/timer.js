@@ -1,44 +1,47 @@
-// timer.js
+import { loadData, saveData } from './storage.js';
 
-let timeLeft = 25 * 60; // Focus time in seconds (25 minutes)
+let timeLeft = loadData('timeLeft') || 25 * 60;  // Get the saved timer time or default to 25 minutes
+let isFocus = loadData('isFocus') || true;  // Get whether the timer is in Focus or Break mode
 let timerInterval;
-let isFocus = true; // Track if it's Focus or Break time
 
-// Function to start the timer
 export function startTimer() {
-  if (timerInterval) return; // Prevent multiple timers
+  if (timerInterval) return;  // Prevent multiple timers from starting
 
+  // Start the countdown interval
   timerInterval = setInterval(() => {
-    timeLeft--;
+    timeLeft--;  // Decrement timeLeft by 1 each second
     updateTimerDisplay();
+    saveData('timeLeft', timeLeft);  // Save the updated timeLeft to localStorage
 
+    // When the timer reaches 0, switch to Break
     if (timeLeft <= 0) {
-      clearInterval(timerInterval);
-      switchToBreak(); // Switch to Break when the timer ends
+      clearInterval(timerInterval);  // Stop the timer
+      switchToBreak();  // Switch to break when the time is up
     }
   }, 1000);
 }
 
-// Function to reset the timer
 export function resetTimer() {
-  clearInterval(timerInterval);
+  clearInterval(timerInterval);  // Stop the current timer
   timerInterval = null;
-  timeLeft = 25 * 60;
+  timeLeft = 25 * 60;  // Reset the timer to 25 minutes (Focus)
+  saveData('timeLeft', timeLeft);  // Save the reset time
+  document.getElementById("status").textContent = "Focus";  // Reset status to Focus
+  saveData('isFocus', true);  // Save the Focus state
   updateTimerDisplay();
-  document.getElementById("status").textContent = "Focus"; // Reset the status to Focus
 }
 
-// Function to update the timer display
 function updateTimerDisplay() {
-  const minutes = Math.floor(timeLeft / 60);
-  const seconds = timeLeft % 60;
+  const minutes = Math.floor(timeLeft / 60);  // Get the minutes part
+  const seconds = timeLeft % 60;  // Get the seconds part
   document.getElementById("timer-display").textContent = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
 }
 
-// Function to switch to Break
 function switchToBreak() {
-  isFocus = false;
-  document.getElementById("status").textContent = "Break"; // Change the label to Break
-  timeLeft = 5 * 60; // Break time is 5 minutes
-  startTimer(); // Start the break timer
+  isFocus = false;  // Change state to Break
+  document.getElementById("status").textContent = "Break";  // Change the status label
+  timeLeft = 5 * 60;  // Set timeLeft to 5 minutes for Break
+  saveData('isFocus', isFocus);  // Save Break state
+  saveData('timeLeft', timeLeft);  // Save break time
+  startTimer();  // Start the break timer
 }

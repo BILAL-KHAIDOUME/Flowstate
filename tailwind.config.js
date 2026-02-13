@@ -21,6 +21,8 @@ module.exports = {
         lightgray:'#D9D9D9',
         brad:'#D4C6C6',
         nums:'#465946',
+        customorange: '#FF6F00',
+        customyellow: '#FFF4C7'
   
       },
     },
