@@ -4,6 +4,7 @@
   "description": "",
   "main": "app.js",
   "scripts": {
+    "postinstall": "chmod +x node_modules/.bin/tailwindcss",
     "dev": "tailwindcss -i src/input.css -o public/style.css --watch",
     "build": "tailwindcss -i src/input.css -o public/style.css --minify"
   },
